@@ -1,10 +1,26 @@
 pipeline {
-    agent { docker { image 'python:3.14.0-alpine3.22' } }
+    agent { docker { image 'python:3.11-slim' } }
     stages {
         stage('build') {
             steps {
                 sh 'python --version'
             }
+        }
+        stage('test') {
+            steps {
+                sh 'pytest'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'try'
+        }
+        success {
+            echo 'ok'
+        }
+        failure {
+            echo 'fail'
         }
     }
 }
