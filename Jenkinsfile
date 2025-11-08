@@ -1,21 +1,22 @@
 pipeline {
-    agent { docker { image 'python:3.11-slim' } }
+    agent any
     stages {
-        stage('build') {
+        stage('checkout'){
             steps {
-                sh 'python --version'
+                git branch: 'main', url: 'https://github.com/qzmacaos/fast-api-example.git'
             }
         }
-    }
-    post {
-        always {
-            echo 'try'
+        stage('build'){
+            steps {
+                script {
+                    dockerImage = docker.build("fast-api-example:latest")
+                }
+            }
         }
-        success {
-            echo 'ok'
-        }
-        failure {
-            echo 'fail'
+        stage('test'){
+            steps {
+                sh 'docker run --rm fast-api-example:latest pytest'
+            }
         }
     }
 }
